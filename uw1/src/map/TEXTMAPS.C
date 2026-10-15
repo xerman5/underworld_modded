@@ -61,6 +61,30 @@ uint16 w64_buf;                         /* DS:720A, the walls' 64-pixel bitmaps 
 uint16 w64_types[TXM_WALLS];                 /* DS:720C, each wall's terrain type */
 int16 w64_num;                          /* DS:726C, wall textures */
 
+#ifndef __TURBOC__
+/* Port only: 64-pixel floors. An F32.TR whose textures are 64 pixels a side (a player's own,
+   in the home folder's DATA; the game's are 32) is read into a block of its own, as the
+   workspace has no room for them: 10 times 4 KB, at paragraph PORT_FLOORS64_SEG, which no
+   other region uses (the EMS page frame ends at F000). init_txtlib points the floors' slots
+   in seg051_C3EC at it, and GRIDDB.C's txtflr draws them through the walls' 64-pixel bitmap
+   slots. With the game's own F32.TR nothing changes. */
+#define PORT_FLOORS64_SEG 0xF000u
+void pm_add(const char *name, void *base, size_t size, unsigned seg);  /* Exhume's mem/parmap.c */
+char port_floors64;                     /* the floors are 64 pixels a side (GRIDDB.C) */
+
+static unsigned port_floors64_block(void)
+{
+    static unsigned char *block;
+
+    if (!block) {
+        if ((block = calloc(TXM_FLOORS, 0x1000)) == NULL)
+            pfatal_code(ERR_LOWMEM | 8);
+        pm_add("64-pixel floors", block, TXM_FLOORS * 0x1000, PORT_FLOORS64_SEG);
+    }
+    return PORT_FLOORS64_SEG;
+}
+#endif
+
 /* 0x0: the default texture map: walls 0..11 repeated, floors 0..9, doors 0..5; loads them
    and fills the 3D view's tables. */
 char far init_txtlib(void)
@@ -97,6 +121,10 @@ char far init_txtlib(void)
         seg051_C378[i] = 0;
         seg051_C3B2[i] = 0;
         seg051_C3EC[i] = f32_buf + ((i - TXM_WALLS) << 6);
+#ifndef __TURBOC__
+        if (port_floors64)              /* port only: 64-pixel floors, in their own block */
+            seg051_C3EC[i] = PORT_FLOORS64_SEG + ((i - TXM_WALLS) << 8);
+#endif
         seg051_C460[i] = f16p + ((i - TXM_WALLS) << 4);
     }
     return 1;
@@ -207,6 +235,19 @@ void far load_tr_mem(char *name, int16 *ids, int16 *count, uint16 seg)
     if (b != 2) pfatal_code(ERR_READ | 0x10);
     read(fd, &b, 1);
     size = b * b;
+#ifndef __TURBOC__
+    if (seg == f32_buf) {
+        /* port only: the floors (load_txtmaps, PLAYDATA.C's swap_tmap). 64-pixel ones go to
+           their own block; any other size but the game's 32 is refused, as it would overrun the
+           workspace */
+        port_floors64 = b == 64;
+        if (port_floors64) {
+            if (*count > TXM_FLOORS) *count = TXM_FLOORS;
+            dst = MK_FP(port_floors64_block(), 0);
+        } else if (b != 32)
+            pfatal_code(ERR_READ | 0x10);
+    }
+#endif
     read(fd, &cnt, 2);
     if ((offs = calloc(4, cnt)) == 0) {
         pfatal_code(ERR_LOWMEM | 8);

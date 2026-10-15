@@ -320,7 +320,7 @@ UW1's values are the ones UW-Formats 4.8 lists, measured the same way: 0x10 wate
 | | byte + 32 per palette | `.CR` only: number of auxiliary palettes, then the palettes ([LOADGR.C:84](../uw2/src/gfx/LOADGR.C#L84)) |
 | | longs | picture offsets. The code reads count + 1 longs ([LOADGR.C:125](../uw2/src/gfx/LOADGR.C#L125)) and never uses the last |
 
-A picture's size is the next offset less its own, and the last picture's runs to the end of the file ([LOADGR.C:148](../uw2/src/gfx/LOADGR.C#L148)). UW1 checks the `.TR` type byte the same way, fatally ([UW1 TEXTMAPS.C:207](../uw1/src/map/TEXTMAPS.C#L207)).
+A picture's size is the next offset less its own, and the last picture's runs to the end of the file ([LOADGR.C:148](../uw2/src/gfx/LOADGR.C#L148)). UW1 checks the `.TR` type byte the same way, fatally ([UW1 TEXTMAPS.C:207](../uw1/src/map/TEXTMAPS.C#L207)). The UW1 port also reads an `F32.TR` of 64-pixel floors (a player's own, in the home folder's `DATA`), drawing them through the walls' 64-pixel bitmap slots; any other floor size but 32 is refused ([UW1 TEXTMAPS.C](../uw1/src/map/TEXTMAPS.C), `load_tr_mem`).
 
 A picture (`struct Bitmap`, [include/gfx.h:127](../uw2/src/include/gfx.h#L127)): byte type (4 8-bit, 8 4-bit run-length, 0xA 4-bit), byte width, byte height; for type 4, a word size and the data; for the 4-bit types, a byte auxiliary palette, a word size in nibbles, and the data.
 

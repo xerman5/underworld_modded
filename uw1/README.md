@@ -26,6 +26,8 @@ Options (`uw1port --help` lists them all):
 - Roland MT-32 music needs your own MT-32 or CM-32L ROM images, which are not included. The port finds them by itself (a `roms` folder in its home folder, beside the game or the program, or where DOSBox keeps MT-32 ROMs), under any file names, or you give them: `--mt32-roms DIR` on the first run (or `--sound 6,1 --mt32-roms DIR` later), with `CM32L_CONTROL.ROM` and `CM32L_PCM.ROM` (or `MT32_CONTROL.ROM` and `MT32_PCM.ROM`) in DIR. The folder is remembered.
 - `--scale N` sets the window's starting size, `--no-aspect` shows square pixels instead of a 4:3 CRT's shape, `--no-integer` scales freely.
 
+A file in the `DATA` folder of the home folder is read in place of the game's own, so the game's files are never changed. Floor textures can be replaced this way, and the port also reads floors of 64 pixels a side where the game's are 32: an `F32.TR` of them (with its 16-pixel `F16.TR`), in the game's format and palette ([FORMATS.md](../docs/FORMATS.md#pictures-gr-tr-cr-bytark-and-byt)), is used as it is, for sharper floors and ceilings close up. Builds before this one, and DOS, cannot read 64-pixel floors, so take the file out before running one. Delete the files to go back to the game's floors.
+
 ## Build the port from source
 
 The port needs no Borland toolchain, DOS emulator or game data to build.

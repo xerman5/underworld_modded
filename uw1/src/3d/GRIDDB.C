@@ -68,6 +68,7 @@
    forward frame, the squares behind queued without their objects, and the queue kept back from
    its end (UltimaHacks' enqueueGridCoords, enqueueDrawItems and enqueueDrawBlock) */
 extern int port_drawing_behind;
+extern char port_floors64;              /* map/TEXTMAPS.C: the floors are 64 pixels a side */
 int port_setpnt(char x, char y, char z);
 int port_queue_full(void);
 #define SetPnt(x, y, z) port_setpnt(x, y, z)
@@ -493,6 +494,14 @@ void far txtflr(unsigned char *pts, unsigned char shade, unsigned char tex)
         cTmDm = 0x20;
         cTmHg = 0x3FF;
         tex = tex + 0x30;
+#ifndef __TURBOC__
+        if (port_floors64) {            /* port only: 64-pixel floors (map/TEXTMAPS.C) */
+            cTmBm += 2;                 /* 4 or 5: the walls' 64-pixel slots, which each wall */
+            cTmSz = 0x1000;             /* fetches again (tCacheOK), so a floor can borrow them */
+            cTmDm = 0x40;
+            cTmHg = 0xFFF;
+        }
+#endif
     }
     *dbptr++ = OP_FETCHMAP;
     *dbptr++ = cTmBm;
