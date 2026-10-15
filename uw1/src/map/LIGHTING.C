@@ -173,8 +173,8 @@ static unsigned char port_light_maps[0x1000];   /* LIGHT.DAT or MONO.DAT as load
 static char port_light_have;            /* and they have been */
 
 /* the radius by light level: none (0) as the original, 3; the original's 3 to 7 widened by about
-   two thirds */
-static const char port_reach[8] = { 3, 5, 6, 6, 8, 10, 12, 12 };
+   a third */
+static const char port_reach[8] = { 3, 4, 5, 5, 7, 8, 10, 10 };
 /* maps 11 to 15, as percentages of map 0's colours (the original's are about 37 to 14) */
 static const unsigned char port_tail_pct[5] = { 34, 25, 16, 8, 2 };
 
