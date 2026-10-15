@@ -14,3 +14,7 @@ uw1/NOTICE and uw2/NOTICE say, for each game, which files are derived from its p
 EXHUME
 
 exhume/ is a git submodule: Exhume (https://github.com/abedegno/Exhume), by the same author under the same MIT licence. Its runtime is compiled into both ports and their release packages.
+
+THIS FORK
+
+underworld_modded (https://github.com/xerman5/underworld_modded) is an unofficial, modified copy of Underworld Exhumed (https://github.com/abedegno/underworld-exhumed). Everything above applies to it unchanged. Its own changes, a few optional additions to the ports listed in its README, are under the same MIT licence; it is not affiliated with or endorsed by the original author.
