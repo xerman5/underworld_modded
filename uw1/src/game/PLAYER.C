@@ -50,6 +50,7 @@ void far port_key_compass(void);
 void far port_key_flasks(void);
 void far port_key_pitch(int dir);
 void far port_key_rune(int ch);
+void far port_key_take(void);
 void far port_mouse_look_toggle(void);    /* ui/MOUSE.C, port only */
 #endif
 
@@ -224,6 +225,8 @@ void far init_player(void)
         _input_addkey(KEY_SHIFT | PORT_KEY_LSHIFT, 7, 0x11, (InputFn)parse_playin);      /* jump, as j */
         _input_addkey(KEY_SHIFT | KEY_CTRL | PORT_KEY_LSHIFT, 6, 0x11, (InputFn)parse_playin);   /* standing long jump, as J */
     }
+    if (ENHANCED(ENH_TAKE_KEY))        /* port only: --enhance take-key's t (ui/keys.c) */
+        _input_addkey('t', 0, 1, (InputFn)port_key_take);
     if (ENHANCED(ENH_RUNE_KEYS)) {     /* port only: the rune keys (ui/keys.c) */
         int c;
         for (c = 'a'; c <= 'y'; c++)
