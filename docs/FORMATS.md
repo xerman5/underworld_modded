@@ -155,7 +155,7 @@ The free lists work as UW-Formats 4.3 says. `Obj_Alloc` takes the entry at the t
 | game | length | layout | source |
 | --- | --- | --- | --- |
 | UW2 | 0x86 | 64 words, texture numbers in `T64.TR`; then 3 words holding the six door textures, low byte first | [TEXTMAPS.C:64](../uw2/src/map/TEXTMAPS.C#L64), [TEXTMAPS.C:93](../uw2/src/map/TEXTMAPS.C#L93) |
-| UW1 | 0x7A | 48 wall words (`W64.TR`), 10 floor words (`F32.TR`), then 3 words of door textures | [UW1 TEXTMAPS.C:118](../uw1/src/map/TEXTMAPS.C#L118) |
+| UW1 | 0x7A | 48 wall words (`W64.TR`), 10 floor words (`F32.TR`), then 3 words of door textures | [UW1 TEXTMAPS.C:145](../uw1/src/map/TEXTMAPS.C#L145) |
 
 A block of another length makes `Txm_Load` return 0 but its buffer is used anyway ([TEXTMAPS.C:73](../uw2/src/map/TEXTMAPS.C#L73)). All shipped texture blocks are 0x86 (UW2) and 0x7A (UW1) (measured).
 
@@ -165,9 +165,9 @@ The automap block is 0x1000 bytes, a byte per tile in tile order ([AUTOMAP.C:186
 
 | bits | UW2 | UW1 |
 | --- | --- | --- |
-| 0–3 | 0 never seen; 1–9 the tile type, seen; 0xA–0xF a tile in view range but not visible, from `tile_mapcode`: solid 0xA, open and slopes 0xB, diagonals 0xC–0xF ([GRIDDB.C:150](../uw2/src/3d/GRIDDB.C#L150), [GRIDDB.C:531](../uw2/src/3d/GRIDDB.C#L531)) | the same ([UW1 GRIDDB.C](../uw1/src/3d/GRIDDB.C#L156)) |
-| 4–5 | kind, from `curautocode`: 1 a door ([DRAWOBJ.C:501](../uw2/src/3d/DRAWOBJ.C#L501)), 2 a bridge (model 2, item 0x164) drawn with a `TMOBJ.GR` texture ([DRAWOBJ.C:357](../uw2/src/3d/DRAWOBJ.C#L357)), 3 a wall texture object whose texture's terrain is 3 or 4, stairs ([DRAWOBJ.C:253](../uw2/src/3d/DRAWOBJ.C#L253)); written at [GRIDDB.C:621](../uw2/src/3d/GRIDDB.C#L621) | the floor's terrain word as it is, so 0x10 water and 0x20 lava ([UW1 GRIDDB.C:562](../uw1/src/3d/GRIDDB.C#L562)) |
-| 6–7 | the floor texture's terrain class, `TxmTerr & 0xC0`: 0x40 water, 0x80 lava, 0xC0 ice ([GRIDDB.C:542](../uw2/src/3d/GRIDDB.C#L542); class names measured, see [TERRAIN.DAT](#terraindat)) | the kind, `curautocode << 6` ([UW1 GRIDDB.C:641](../uw1/src/3d/GRIDDB.C#L641)) |
+| 0–3 | 0 never seen; 1–9 the tile type, seen; 0xA–0xF a tile in view range but not visible, from `tile_mapcode`: solid 0xA, open and slopes 0xB, diagonals 0xC–0xF ([GRIDDB.C:150](../uw2/src/3d/GRIDDB.C#L150), [GRIDDB.C:531](../uw2/src/3d/GRIDDB.C#L531)) | the same ([UW1 GRIDDB.C](../uw1/src/3d/GRIDDB.C#L157)) |
+| 4–5 | kind, from `curautocode`: 1 a door ([DRAWOBJ.C:501](../uw2/src/3d/DRAWOBJ.C#L501)), 2 a bridge (model 2, item 0x164) drawn with a `TMOBJ.GR` texture ([DRAWOBJ.C:357](../uw2/src/3d/DRAWOBJ.C#L357)), 3 a wall texture object whose texture's terrain is 3 or 4, stairs ([DRAWOBJ.C:253](../uw2/src/3d/DRAWOBJ.C#L253)); written at [GRIDDB.C:621](../uw2/src/3d/GRIDDB.C#L621) | the floor's terrain word as it is, so 0x10 water and 0x20 lava ([UW1 GRIDDB.C:606](../uw1/src/3d/GRIDDB.C#L606)) |
+| 6–7 | the floor texture's terrain class, `TxmTerr & 0xC0`: 0x40 water, 0x80 lava, 0xC0 ice ([GRIDDB.C:542](../uw2/src/3d/GRIDDB.C#L542); class names measured, see [TERRAIN.DAT](#terraindat)) | the kind, `curautocode << 6` ([UW1 GRIDDB.C:685](../uw1/src/3d/GRIDDB.C#L685)) |
 
 So the two games swap the nibbles' halves. The map screen reads UW2's byte at [AUTOMAP.C:347](../uw2/src/ui/AUTOMAP.C#L347) and UW1's at [UW1 AUTOMAP.C:288](../uw1/src/ui/AUTOMAP.C#L288). Kinds and classes combine: the shipped level 79 automap has a tile of 0xF_, stairs on ice (measured).
 
@@ -294,7 +294,7 @@ The names are the header's, provisional except where a use is cited.
 
 ## TERRAIN.DAT
 
-UW2: a word per `T64.TR` texture, 256 words; `Load_Terrains` reads the word at twice the texture number for each of the level's 64 textures ([map/TEXTMAPS.C:121](../uw2/src/map/TEXTMAPS.C#L121)). UW1: walls from offset 0 and floors from 0x200, 512 words ([UW1 TEXTMAPS.C:232](../uw1/src/map/TEXTMAPS.C#L232)).
+UW2: a word per `T64.TR` texture, 256 words; `Load_Terrains` reads the word at twice the texture number for each of the level's 64 textures ([map/TEXTMAPS.C:121](../uw2/src/map/TEXTMAPS.C#L121)). UW1: walls from offset 0 and floors from 0x200, 512 words ([UW1 TEXTMAPS.C:272](../uw1/src/map/TEXTMAPS.C#L272)).
 
 UW2's word, as the code reads it:
 
@@ -320,7 +320,7 @@ UW1's values are the ones UW-Formats 4.8 lists, measured the same way: 0x10 wate
 | | byte + 32 per palette | `.CR` only: number of auxiliary palettes, then the palettes ([LOADGR.C:84](../uw2/src/gfx/LOADGR.C#L84)) |
 | | longs | picture offsets. The code reads count + 1 longs ([LOADGR.C:125](../uw2/src/gfx/LOADGR.C#L125)) and never uses the last |
 
-A picture's size is the next offset less its own, and the last picture's runs to the end of the file ([LOADGR.C:148](../uw2/src/gfx/LOADGR.C#L148)). UW1 checks the `.TR` type byte the same way, fatally ([UW1 TEXTMAPS.C:207](../uw1/src/map/TEXTMAPS.C#L207)). The UW1 port also reads an `F32.TR` of 64-pixel floors (a player's own, in the home folder's `DATA`), drawing them through the walls' 64-pixel bitmap slots; any other floor size but 32 is refused ([UW1 TEXTMAPS.C](../uw1/src/map/TEXTMAPS.C), `load_tr_mem`).
+A picture's size is the next offset less its own, and the last picture's runs to the end of the file ([LOADGR.C:148](../uw2/src/gfx/LOADGR.C#L148)). UW1 checks the `.TR` type byte the same way, fatally ([UW1 TEXTMAPS.C:234](../uw1/src/map/TEXTMAPS.C#L234)). The UW1 port also reads an `F32.TR` of 64-pixel floors (a player's own, in the home folder's `DATA`), drawing them through the walls' 64-pixel bitmap slots; any other floor size but 32 is refused ([UW1 TEXTMAPS.C](../uw1/src/map/TEXTMAPS.C), `load_tr_mem`).
 
 A picture (`struct Bitmap`, [include/gfx.h:127](../uw2/src/include/gfx.h#L127)): byte type (4 8-bit, 8 4-bit run-length, 0xA 4-bit), byte width, byte height; for type 4, a word size and the data; for the 4-bit types, a byte auxiliary palette, a word size in nibbles, and the data.
 
@@ -349,7 +349,7 @@ UW1's `.BYT` files are the same 64000 bytes, read raw ([UW1 CHARGEN.C:741](../uw
 | `ALLPALS.DAT` | 32 auxiliary palettes of 16 colour indexes: the code reads 0x200 bytes; the file is 513 bytes in both games (measured). `WEAP.CM` replaces palette 30 in memory | [LOADGR.C:428](../uw2/src/gfx/LOADGR.C#L428), [PANELS.C:697](../uw2/src/ui/PANELS.C#L697) |
 | `LIGHT.DAT`, `MONO.DAT` | 16 maps of 256 colour indexes, 0x1000 bytes; `MONO.DAT` replaces `LIGHT.DAT` at light level 5 | [LIGHTING.C:66](../uw2/src/map/LIGHTING.C#L66), [LIGHTING.C:93](../uw2/src/map/LIGHTING.C#L93) |
 | `SHADES.DAT` | 8 rows, light level 0 (darkest) to 7, of six int16: smooth_div, smooth_base, smooth_lowpass, curvrad (view radius, 3 to 7), distpoly, dist8; read at level × 12. 96 bytes, the same in both games (measured) | [LIGHTING.C:74](../uw2/src/map/LIGHTING.C#L74) |
-| `XFER.DAT` | colour translation tables of 256 bytes: UW2 reads 5 (0x500, the file's size), UW1 6 (0x600, its file's size) | [LIGHTING.C:94](../uw2/src/map/LIGHTING.C#L94), [UW1 LIGHTING.C:95](../uw1/src/map/LIGHTING.C#L95) |
+| `XFER.DAT` | colour translation tables of 256 bytes: UW2 reads 5 (0x500, the file's size), UW1 6 (0x600, its file's size) | [LIGHTING.C:94](../uw2/src/map/LIGHTING.C#L94), [UW1 LIGHTING.C:114](../uw1/src/map/LIGHTING.C#L114) |
 | `DL.DAT` | UW2: a byte per level, 80; value mod 10 is a light level, and 10 or more makes it the level's minimum light | [PLAYDATA.C:432](../uw2/src/game/PLAYDATA.C#L432) |
 
 No matched source names `LIGHTS.DAT` (both games, 8 bytes), `LIGHTING.DAT` or `CONTROLS.DAT` (UW2). Nothing in the code reads them.
@@ -428,14 +428,14 @@ This section lists what is UW1's alone, with the source that reads or writes it.
 | `LEV.ARK` blocks | 135 (measured): level map at level − 1, animation overlays at level + 8, texture map at level + 0x11, automap at level + 0x1A, notes at level + 0x23. The shipped file has only the first three kinds (measured) | [include/level.h:39](../uw1/src/include/level.h#L39) |
 | level block | 0x7C08 bytes, ending at the magic word 0x7577; UW2's carries overlays and timers after it, UW1's does not | [include/level.h:17](../uw1/src/include/level.h#L17), [map/MAP.C:86](../uw1/src/map/MAP.C#L86) |
 | overlay block | 64 entries of 6 bytes, 0x180. A block of another length loads as no overlays. Saving zeroes only the object index of the entry at the count, so entries after it are written back as they were | [obj/EFFECT.C:480](../uw1/src/obj/EFFECT.C#L480), [EFFECT.C:499](../uw1/src/obj/EFFECT.C#L499) |
-| texture map | 0x7A bytes: 48 wall words (`W64.TR`), 10 floor words (`F32.TR`), 3 words of door textures | [map/TEXTMAPS.C:118](../uw1/src/map/TEXTMAPS.C#L118) |
-| `TERRAIN.DAT` | 512 words: walls from 0, floors from 0x200 | [map/TEXTMAPS.C:232](../uw1/src/map/TEXTMAPS.C#L232) |
-| automap byte | bits 0–3 the tile type; bits 4–5 the floor's terrain word as it is (0x10 water, 0x20 lava); bits 6–7 the kind (1 door, 2 bridge, 3 stairs). UW2 has the two upper fields the other way round | [3d/GRIDDB.C:562](../uw1/src/3d/GRIDDB.C#L562), [GRIDDB.C:641](../uw1/src/3d/GRIDDB.C#L641), [ui/AUTOMAP.C:288](../uw1/src/ui/AUTOMAP.C#L288) |
+| texture map | 0x7A bytes: 48 wall words (`W64.TR`), 10 floor words (`F32.TR`), 3 words of door textures | [map/TEXTMAPS.C:145](../uw1/src/map/TEXTMAPS.C#L145) |
+| `TERRAIN.DAT` | 512 words: walls from 0, floors from 0x200 | [map/TEXTMAPS.C:272](../uw1/src/map/TEXTMAPS.C#L272) |
+| automap byte | bits 0–3 the tile type; bits 4–5 the floor's terrain word as it is (0x10 water, 0x20 lava); bits 6–7 the kind (1 door, 2 bridge, 3 stairs). UW2 has the two upper fields the other way round | [3d/GRIDDB.C:606](../uw1/src/3d/GRIDDB.C#L606), [GRIDDB.C:685](../uw1/src/3d/GRIDDB.C#L685), [ui/AUTOMAP.C:288](../uw1/src/ui/AUTOMAP.C#L288) |
 | `PLAYER.DAT` | key byte (name[0] xor 0xAA), the 0xD2-byte record xored with key + 3, key + 6, ... restarting every 0x50 bytes, then the count word at 0xD3 and the inventory workspace at 0xD5 | [game/PLAYDATA.C:104](../uw1/src/game/PLAYDATA.C#L104), [sys/MISCUTIL.C:268](../uw1/src/sys/MISCUTIL.C#L268), [inv/INVSAVE.C:101](../uw1/src/inv/INVSAVE.C#L101) |
 | player record | `struct Player`, 0xD2 bytes; the same as UW2's to 0x5D, then UW1's own fields | [include/player.h:26](../uw1/src/include/player.h#L26) |
 | `.BYT` | 320 × 200 8-bit screens, 64000 bytes, read raw | [game/CHARGEN.C:741](../uw1/src/game/CHARGEN.C#L741) |
 | `WEAPONS.DAT` | 8 records of 0x38 bytes, 28 x then 28 y, record (1 − lefty) × 4 + weapon kind; pictures from `WEAPONS.GR` at (1 − lefty) × 0x70 + kind × 0x1C | [ui/PANELS.C:756](../uw1/src/ui/PANELS.C#L756) |
-| `XFER.DAT` | six 256-byte tables, 0x600 | [map/LIGHTING.C:95](../uw1/src/map/LIGHTING.C#L95) |
+| `XFER.DAT` | six 256-byte tables, 0x600 | [map/LIGHTING.C:114](../uw1/src/map/LIGHTING.C#L114) |
 | `SOUNDS.DAT` | a count byte, then 5 bytes an effect: patch, note, volume, length high byte first. 24 effects (measured) | [sound/SOUND.C:681](../uw1/src/sound/SOUND.C#L681) |
 | music | theme n is `SOUND\UWnn.XMI` for the MT-32 and `AWnn.XMI` otherwise, nn in octal | [sound/SOUND.C:319](../uw1/src/sound/SOUND.C#L319) |
 | digital sound | `SOUND\nn.VOC` | [sound/SOUND.C:1075](../uw1/src/sound/SOUND.C#L1075) |

@@ -433,7 +433,7 @@ Source: UW2 [TRIGGER.C:346](../../uw2/src/event/TRIGGER.C#L346), [TRIGGER.C:664]
 | 0x3C to 0x3E | **Earthquake**, only when the player set it off: kind `quality - 0x3B` (bit 0 shakes the screen, bit 1 bounces the player), strength `owner`. |
 | 0x3F | **The end of the game**: the ending begins, mode `owner + 1`. |
 
-Source: `do_trap_hack` UW1 [TRIGGER.C:501](../../uw1/src/event/TRIGGER.C#L501), `crystal_ball` [PLAYER.C:369](../../uw1/src/game/PLAYER.C#L369), `work_bullfrog_tiles` [WORLDEV.C:355](../../uw1/src/event/WORLDEV.C#L355), `ExplodingBook_ovr107_1259` [WORLDEV.C:466](../../uw1/src/event/WORLDEV.C#L466).
+Source: `do_trap_hack` UW1 [TRIGGER.C:501](../../uw1/src/event/TRIGGER.C#L501), `crystal_ball` [PLAYER.C:372](../../uw1/src/game/PLAYER.C#L372), `work_bullfrog_tiles` [WORLDEV.C:355](../../uw1/src/event/WORLDEV.C#L355), `ExplodingBook_ovr107_1259` [WORLDEV.C:466](../../uw1/src/event/WORLDEV.C#L466).
 
 ## Hack traps, UW2
 
