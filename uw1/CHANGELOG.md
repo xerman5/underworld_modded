@@ -4,6 +4,7 @@ For players. Each release's notes are drafted from here. Releases are tagged `uw
 
 ## Unreleased
 
+- **New:** optional enhancement long-light (`--enhance long-light`). With a light, you see further and the view fades into darkness, where the original stops drawing at a hard edge. Without a light it is as before, and the automap fills in as before.
 - **New:** optional enhancement take-key (`--enhance take-key`). The T key takes what is under the pointer, or the crosshair with mouse-look, without switching to the take mode (F3) first.
 - **Changed:** with the mouse-look enhancement, taking an object now frees the pointer, starting at the crosshair, so the object can be dragged to the inventory or thrown; mouse-look comes back once it is put down. Before, the object stayed fixed at the crosshair until mouse-look was turned off by hand.
 

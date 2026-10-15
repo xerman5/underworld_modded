@@ -22,4 +22,5 @@ const struct enhance_flag enhance_table[ENH_COUNT] = {
     { "tidy-objects", "A stack too heavy to take part of no longer loses an object slot, and lost slots are freed on arrival", ENH_GAMEPLAY, NULL, NULL },
     { "restore-at-rest", "A restored game starts at rest, without the motion or fall it was restored in", ENH_GAMEPLAY, NULL, NULL },
     { "take-key", "The T key takes what is under the pointer (the crosshair with mouse-look), as a click in the take mode", ENH_TIMING, NULL, NULL },
+    { "long-light", "A light reaches further and fades to black at its edge, where the original cuts off", ENH_GAMEPLAY, NULL, NULL },
 };

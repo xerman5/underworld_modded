@@ -305,6 +305,41 @@ void far do_3d_pickup(void)
     subprocess();
 }
 
+#ifndef __TURBOC__
+/* Port only: --enhance long-light (map/LIGHTING.C) draws squares beyond the original's radius, but
+   maps them as the original did. Within its radius, as ever. Beyond it in the rows the original
+   walked (to its radius: the walk ends at the last row with a square in range), as its squares out
+   of range, unseen: an automap code and a count in pipeexp if the square has none. Further out,
+   not at all. The squares beyond are queued only while half the database is free
+   (VIEW3D.C's port_far_queue_full), which keeps room for the nearer ones, queued after them. */
+extern int16 port_light_reach0;
+int port_far_queue_full(void);
+
+static void port_grdb_elem(unsigned char *automap)
+{
+    unsigned char mapped;
+    int16 exp;
+
+    if (port_light_reach0 >= curvrad
+        || cSqRt((int32)(16 - loopx) * (16 - loopx) + (int32)loopy * loopy) <= port_light_reach0) {
+        grdb_elem(automap);
+        return;
+    }
+    mapped = *automap;                  /* drawn, its own mapping thrown away */
+    exp = pipeexp;
+    if (!port_far_queue_full())
+        grdb_elem(&mapped);
+    pipeexp = exp;
+    if (loopy <= port_light_reach0 && *automap == 0) {
+        *automap = tile_mapcode[tmptr->type];
+        pipeexp++;
+    }
+}
+#define GRDB_ELEM port_grdb_elem
+#else
+#define GRDB_ELEM grdb_elem
+#endif
+
 /* Walk the vision grid from row mxY (the farthest) down to the eye's row, emitting
    each row's tiles from the left edge to the middle and from the right edge back to
    the middle, then the middle column, so that nearer faces come later in the database.
@@ -342,16 +377,16 @@ void far subprocess(void)
              i = idx + loopx * dx; loopx < 0x10;
              loopx++, p_gloc++, tmptr += dx, i += dx)
             if (!(i & 0xF000))
-                grdb_elem(PlayersMap[0] + i);
+                GRDB_ELEM(PlayersMap[0] + i);
         sort_setup(1);
         for (loopx = 0x20, p_gloc = gloc + loopx, tmptr = row + loopx * dx,
              i = idx + loopx * dx; loopx > 0x10;
              loopx--, p_gloc--, tmptr -= dx, i -= dx)
             if (!(i & 0xF000))
-                grdb_elem(PlayersMap[0] + i);
+                GRDB_ELEM(PlayersMap[0] + i);
         sort_setup(0);
         if (!(i & 0xF000))
-            grdb_elem(PlayersMap[0] + i);
+            GRDB_ELEM(PlayersMap[0] + i);
         *dbptr++ = OP_MOUSEQ;
         gloc -= 33;
         row -= dy;

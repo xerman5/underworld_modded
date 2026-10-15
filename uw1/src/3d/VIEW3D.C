@@ -290,6 +290,24 @@ int port_queue_full(void)
     return 1;
 }
 
+/* --enhance long-light's squares beyond the original's radius (GRIDDB.C's port_grdb_elem): queued
+   only while half the database is free, so that the nearer squares, queued after them, always
+   fit (the original's one pass never comes near the end; nor, measured in UW2, do wide-pitch's
+   two). Reported once on stderr. */
+int port_far_queue_full(void)
+{
+    static int told;
+    char far *end = (char far *)&_dblen;
+
+    if ((char far *)dbptr <= end - (end - (char far *)DbEntry) / 2)
+        return 0;
+    if (!told) {
+        fprintf(stderr, "long-light: the render queue is half full; squares beyond the original's light are left out\n");
+        told = 1;
+    }
+    return 1;
+}
+
 /* the view's edge rays (init_grid's, heading -+ 0x2040) opened to a right angle either side: the
    sines -0x7FFF and 0x7FFF, cosines 0, scaled as init_grid scales its own (>> 4) */
 static void open_rays(void)
@@ -491,6 +509,10 @@ char far setup_vars(void)
    the same calculation for each object.
    name: IDA ShadeCalcs; FM Towns preset_grid_ follows setup_vars_ and is the same code
    (cSqRt, smooth_div, glocs+1). */
+#ifndef __TURBOC__
+/* map/LIGHTING.C's --enhance long-light: the original's radius and shading */
+extern int16 port_light_reach0, port_light_div0, port_light_base0, port_light_low0;
+#endif
 void far preset_grid(int range)
 {
     int d;
@@ -498,11 +520,28 @@ void far preset_grid(int range)
     int u;
     char shades[16];
     int i, j;
+#ifndef __TURBOC__
+    /* port only: with long-light's wider radius the cells keep the original's shades (the automap
+       reads them, GRIDDB.C's grdb_elem), and the cells beyond its radius the darkest, 14; the
+       renderer shades the faces by its own distances */
+    int16 div = smooth_div, base = smooth_base, low = smooth_lowpass;
+    int wide = port_light_reach0 < range;
+
+    if (wide) {
+        smooth_div = port_light_div0;
+        smooth_base = port_light_base0;
+        smooth_lowpass = port_light_low0;
+    }
+#endif
 
     if (range < 16) {
         for (i = 0; i < 16; i++) {
             if (i > range)
                 shades[i] = 15;
+#ifndef __TURBOC__
+            else if (wide && i > port_light_reach0)
+                shades[i] = 14;
+#endif
             else {
                 t = (i << 8) >> 5;
                 u = t * t;
@@ -526,6 +565,13 @@ void far preset_grid(int range)
                     glocs[j][i].shade = shades[d];
             }
     }
+#ifndef __TURBOC__
+    if (wide) {
+        smooth_div = div;
+        smooth_base = base;
+        smooth_lowpass = low;
+    }
+#endif
 }
 
 /* Start the two edges of the vision arc at the eye, at the heading -0x2040 (gvecs[0])
