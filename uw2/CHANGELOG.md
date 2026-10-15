@@ -2,6 +2,10 @@
 
 For players. Each release's notes are drafted from here. Releases are tagged `uw2-vX.Y.Z` (before the move to Underworld Exhumed, `vX.Y.Z`).
 
+## Unreleased
+
+- **Changed:** with the mouse-look enhancement, taking an object now frees the pointer, starting at the crosshair, so the object can be dragged to the inventory or thrown; mouse-look comes back once it is put down. Before, the object stayed fixed at the crosshair until mouse-look was turned off by hand.
+
 ## 1.2.3 (14 October 2026)
 
 - **Fixed:** creating a female character crashed the game on choosing any portrait but the first (UW1's issue 8, which UW2 shares). DOS draws her; the port now does too.

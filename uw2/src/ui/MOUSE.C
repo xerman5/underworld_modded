@@ -606,6 +606,7 @@ int port_pitch_bound(void);
 static char look_on;                    /* mouse-look is on */
 static char look_was;                   /* it was when the 3D view gave way (port_mouse_look_screen) */
 static int16 look_x, look_y;            /* the pointer before it */
+static char look_held;                  /* off while an object is on the cursor (moveMouse) */
 
 int port_mouse_look(void)
 {
@@ -643,7 +644,10 @@ static void mouse_look_set(int on)
 /* the ` key (PLAYER.C's init_player binds it with the flag on) */
 void far port_mouse_look_toggle(void)
 {
-    mouse_look_set(!look_on);
+    if (look_held)                      /* off for a carried object: it stays off after */
+        look_held = 0;
+    else
+        mouse_look_set(!look_on);
     scroll_print(look_on ? "Mouse look enabled.\n" : "Mouse look disabled.\n");
 }
 
@@ -753,6 +757,18 @@ void far moveMouse(void)
            the main menu): mouse-look off, remembered for the view's return, so the pointer moves */
         look_was = 1;
         mouse_look_set(0);
+    }
+    if (look_on && GameInputMode == 1) {
+        /* port only: an object on the cursor (GameInputMode 1) frees the pointer, from the
+           crosshair, so it can go to the inventory or be thrown; mouse-look comes back
+           once it is put down */
+        look_held = 1;
+        look_x = mouse_x;
+        look_y = mouse_y;
+        mouse_look_set(0);
+    } else if (look_held && GameInputMode != 1 && (inplist->mode & 0x11)) {
+        look_held = 0;
+        mouse_look_set(1);
     }
     if (look_on) {                      /* port only: mouse-look turns the view instead */
         mouse_look_step(dx, dy);
