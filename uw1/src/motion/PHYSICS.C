@@ -526,6 +526,21 @@ void far do_player_input(int input, int rate, register int16 *speed)
         *speed = 0;
         return;
     }
+#ifndef __TURBOC__
+    if (ENHANCED(ENH_EVEN_STRAFE)) {
+        /* port only: --enhance even-strafe (docs/ENHANCEMENTS.md), ours. The original's sideways
+           step is under a third of its run (Side_FPS 0xEB against Run_FPS 0x3AC at the run key's
+           rate, about 822) and its backward one under a quarter (Back_FPS 0xBC): forward a
+           little slower (7/8), sideways two and a half times (about 587, 0.8 of the new run)
+           and backward twice (376). The jumps keep pFPS (they return above). */
+        if (input == PIN_FORWARD)
+            *speed = (int16)(*speed * 7 / 8);
+        else if (input == PIN_LEFT || input == PIN_RIGHT)
+            *speed = (int16)(*speed * 5 / 2);
+        else if (input == PIN_BACK)
+            *speed = (int16)(*speed * 2);
+    }
+#endif
     PlayerHeading = h;
 }
 

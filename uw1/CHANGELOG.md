@@ -5,6 +5,7 @@ For players. Each release's notes are drafted from here. Releases are tagged `uw
 ## Unreleased
 
 - **New:** optional enhancement fps-controls (`--enhance fps-controls`), for playing with mouse-look on. The left button attacks, drawing your weapon if it is sheathed: hold it to charge the blow, and a flick of the mouse just before letting go picks it (sideways a slash, down a bash, up or none a stab). The right button looks at what is under the crosshair. Space jumps. With modern-keys, E also takes objects that can be taken, as T does.
+- **New:** optional enhancement even-strafe (`--enhance even-strafe`). Moving sideways and backwards is nearly as fast as forwards, and running forwards a little slower.
 - **New:** 64-pixel floor textures. An `F32.TR` of your own with floors 64 pixels a side (the game's are 32), put in the `DATA` folder of the port's home folder, is used as it is, for sharper floors and ceilings close up. Without one nothing changes.
 - **New:** optional enhancement long-light (`--enhance long-light`). With a light, you see further and the view fades into darkness, where the original stops drawing at a hard edge. Without a light it is as before, and the automap fills in as before.
 - **New:** optional enhancement take-key (`--enhance take-key`). The T key takes what is under the pointer, or the crosshair with mouse-look, without switching to the take mode (F3) first.
