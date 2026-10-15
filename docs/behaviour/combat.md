@@ -53,7 +53,7 @@ Source: `skill_check` ([SKILLCHK.C:39](../../uw2/src/game/SKILLCHK.C#L39)), `rol
 
 The weapon's reach is its object radius (fist: the radius of item 15).
 
-Source: `player_attack`, `GetPlayerWeapon`, `DoPlayerWeapon` ([COMBAT.C:700](../../uw2/src/combat/COMBAT.C#L700), [COMBAT.C:573](../../uw2/src/combat/COMBAT.C#L573), [COMBAT.C:616](../../uw2/src/combat/COMBAT.C#L616)); UW1 [COMBAT.C:650](../../uw1/src/combat/COMBAT.C#L650), [COMBAT.C:572](../../uw1/src/combat/COMBAT.C#L572).
+Source: `player_attack`, `GetPlayerWeapon`, `DoPlayerWeapon` ([COMBAT.C:700](../../uw2/src/combat/COMBAT.C#L700), [COMBAT.C:573](../../uw2/src/combat/COMBAT.C#L573), [COMBAT.C:616](../../uw2/src/combat/COMBAT.C#L616)); UW1 [COMBAT.C:656](../../uw1/src/combat/COMBAT.C#L656), [COMBAT.C:572](../../uw1/src/combat/COMBAT.C#L572).
 
 ## A critter's blow
 
@@ -70,7 +70,7 @@ Source: `player_attack`, `GetPlayerWeapon`, `DoPlayerWeapon` ([COMBAT.C:700](../
 - **UW1.** Unless he resists poison, his poison becomes the creature's value.
 - **UW2.** First `rand() % (poison + 6)` must be greater than twice the player's armour at the location hit. Then, unless he resists poison, his poison becomes the creature's value.
 
-Source: `critter_attack` ([COMBAT.C:891](../../uw2/src/combat/COMBAT.C#L891)); UW1 [COMBAT.C:788](../../uw1/src/combat/COMBAT.C#L788).
+Source: `critter_attack` ([COMBAT.C:891](../../uw2/src/combat/COMBAT.C#L891)); UW1 [COMBAT.C:849](../../uw1/src/combat/COMBAT.C#L849).
 
 ## Resolving a melee blow
 
@@ -128,7 +128,7 @@ Source: `do_damage` ([COMBAT.C:358](../../uw2/src/combat/COMBAT.C#L358)); UW1 [C
 
 **Critters' missiles.** A critter fires its missile weapon on its strike frame ([npc-ai.md](npc-ai.md#spells-and-missiles)). The missile is aimed up or down by the height difference, and the damage follows the same steps without the skill scaling.
 
-Source: `missile_newhit` ([OBJPHYS.C:90](../../uw2/src/motion/OBJPHYS.C#L90)), `missile_thwack` ([COMBAT.C:861](../../uw2/src/combat/COMBAT.C#L861)); UW1 [OBJPHYS.C:102](../../uw1/src/motion/OBJPHYS.C#L102), [COMBAT.C:761](../../uw1/src/combat/COMBAT.C#L761).
+Source: `missile_newhit` ([OBJPHYS.C:90](../../uw2/src/motion/OBJPHYS.C#L90)), `missile_thwack` ([COMBAT.C:861](../../uw2/src/combat/COMBAT.C#L861)); UW1 [OBJPHYS.C:102](../../uw1/src/motion/OBJPHYS.C#L102), [COMBAT.C:822](../../uw1/src/combat/COMBAT.C#L822).
 
 ## Resistances
 
@@ -208,4 +208,4 @@ Source: `player_attack`, `spec_skill` ([COMBAT.C:790](../../uw2/src/combat/COMBA
 
 **Both.** When the player kills a critter, the victory music plays and the player gains `4 * exp + rollem(2, exp)` experience, where exp is the creature's experience value. A powerful critter gives `* (24 + rand() % 24) / 16` of that, 1.5 to nearly 3 times. The gain then goes through the general experience rules, which halve it in UW2 and may halve it again in both games when the player has outgrown the area ([player-upkeep.md](player-upkeep.md#experience-and-levels)).
 
-Source: `player_killed_a` ([COMBAT.C:935](../../uw2/src/combat/COMBAT.C#L935)); UW1 [COMBAT.C:830](../../uw1/src/combat/COMBAT.C#L830).
+Source: `player_killed_a` ([COMBAT.C:935](../../uw2/src/combat/COMBAT.C#L935)); UW1 [COMBAT.C:891](../../uw1/src/combat/COMBAT.C#L891).

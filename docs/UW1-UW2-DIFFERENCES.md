@@ -79,7 +79,7 @@ UW2's Poison Weapon spell sets `PoisonWeap` ([UW2 src/game/PLAYDATA.C:225](../uw
 
 ### A critter's poisonous blow
 
-- **UW1.** A poisonous hit on the player poisons him unless he resists poison (`check_res`) ([UW1 src/combat/COMBAT.C:808](../uw1/src/combat/COMBAT.C#L808)).
+- **UW1.** A poisonous hit on the player poisons him unless he resists poison (`check_res`) ([UW1 src/combat/COMBAT.C:869](../uw1/src/combat/COMBAT.C#L869)).
 - **UW2.** It first needs `rand() % (poison + 6)` to beat twice the player's armour at the hit location ([UW2 src/combat/COMBAT.C:911](../uw2/src/combat/COMBAT.C#L911)).
 - **UnderworldGodot.** One rule for both, and it differs from UW2 too. It applies the armour roll in both games, and compares with the armour itself, not twice it ([`src/interaction/combat/combat.cs:224`](https://github.com/hankmorgan/UnderworldGodot/blob/d7025471a1362860afd9f68555e137a9ff4f131a/src/interaction/combat/combat.cs#L224)).
 
@@ -268,7 +268,7 @@ UnderworldGodot implements the traps in `src/traps/` with many game branches. Th
 
 ## Movement and physics
 
-`newFPS` scales the player's speeds by a ratio for each kind of ground, in tenths in UW1 ([UW1 src/motion/PHYSICS.C:582](../uw1/src/motion/PHYSICS.C#L582)) and in twentieths in UW2 ([UW2 src/motion/PHYSICS.C:748](../uw2/src/motion/PHYSICS.C#L748)).
+`newFPS` scales the player's speeds by a ratio for each kind of ground, in tenths in UW1 ([UW1 src/motion/PHYSICS.C:597](../uw1/src/motion/PHYSICS.C#L597)) and in twentieths in UW2 ([UW2 src/motion/PHYSICS.C:748](../uw2/src/motion/PHYSICS.C#L748)).
 
 | State | UW1 | UW2 |
 | --- | --- | --- |
@@ -281,7 +281,7 @@ UnderworldGodot implements the traps in `src/traps/` with many game branches. Th
 
 UnderworldGodot branches the speeds.
 
-- **Turning.** The turn rate is `ratio / 10` in UW1 ([UW1 src/motion/PHYSICS.C:596](../uw1/src/motion/PHYSICS.C#L596)) and `ratio / 20` in UW2 ([UW2 src/motion/PHYSICS.C:767](../uw2/src/motion/PHYSICS.C#L767)), and UnderworldGodot divides by 20 in both ([`src/physics/motion_player.cs:949`](https://github.com/hankmorgan/UnderworldGodot/blob/d7025471a1362860afd9f68555e137a9ff4f131a/src/physics/motion_player.cs#L949)), so UW1 turns at half speed on the ground.
+- **Turning.** The turn rate is `ratio / 10` in UW1 ([UW1 src/motion/PHYSICS.C:611](../uw1/src/motion/PHYSICS.C#L611)) and `ratio / 20` in UW2 ([UW2 src/motion/PHYSICS.C:767](../uw2/src/motion/PHYSICS.C#L767)), and UnderworldGodot divides by 20 in both ([`src/physics/motion_player.cs:949`](https://github.com/hankmorgan/UnderworldGodot/blob/d7025471a1362860afd9f68555e137a9ff4f131a/src/physics/motion_player.cs#L949)), so UW1 turns at half speed on the ground.
 - **Facing.** The view swings towards the direction of motion by up to 0x400 a step in UW1 ([UW1 src/motion/PHYSICS.C:411](../uw1/src/motion/PHYSICS.C#L411)) and 0x600 in UW2 ([UW2 src/motion/PHYSICS.C:587](../uw2/src/motion/PHYSICS.C#L587)). UnderworldGodot uses 0x600 for both (`src/physics/motion_player.cs:541-551`).
 - **Falling.** In world 8 UW2 does no fall damage ([UW2 src/motion/PHYSICS.C:602](../uw2/src/motion/PHYSICS.C#L602)). UnderworldGodot branches.
 - **Paralysis (UW2).** A paralysed player can't move ([UW2 src/motion/PHYSICS.C:658](../uw2/src/motion/PHYSICS.C#L658)).
