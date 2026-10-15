@@ -700,10 +700,46 @@ void port_mouse_look_screen(int leaving, int is_view)
         mouse_look_set(look_was);
 }
 
+/* --enhance fps-controls' flick (combat/COMBAT.C's player_attack): the mouse-look motion of the last
+   PORT_FLICK_TIME of game time (1/256 s, as the replays keep it) when the attack button comes up
+   picks the blow: under PORT_FLICK_MIN on both axes a stab, sideways a slash, the hand moved up
+   (away) a stab, down a bash. The swings are the original's middle column of each row (COMBAT.C's
+   swing_kind): 2 stab, 5 slash, 8 bash. */
+#define PORT_FLICK_TIME 64              /* a quarter of a second */
+#define PORT_FLICK_MIN  8               /* the driver's motion, look-speed applied */
+#define PORT_FLICK_LOG  32              /* motions kept, enough for the quarter second */
+static struct { uint32 t; int16 dx, dy; } flick[PORT_FLICK_LOG];
+static int flick_next;
+
+int port_fps_flick(void)
+{
+    uint32 now = GAME_TIME();
+    long sx = 0, sy = 0;
+    int i;
+
+    for (i = 0; i < PORT_FLICK_LOG; i++)
+        if (now - flick[i].t <= PORT_FLICK_TIME) {
+            sx += flick[i].dx;
+            sy += flick[i].dy;
+        }
+    if (labs(sx) < PORT_FLICK_MIN && labs(sy) < PORT_FLICK_MIN)
+        return 2;
+    if (labs(sx) > labs(sy))
+        return 5;
+    return sy < 0 ? 2 : 8;              /* dy counts down the screen (moveMouse's mouse_y -= dy) */
+}
+
 static void mouse_look_step(int dx, int dy)
 {
     long p;
     int bound = port_pitch_bound();
+
+    if (dx || dy) {                     /* the flick's record (above) */
+        flick[flick_next].t = GAME_TIME();
+        flick[flick_next].dx = (int16)dx;
+        flick[flick_next].dy = (int16)dy;
+        flick_next = (flick_next + 1) % PORT_FLICK_LOG;
+    }
 
     PlayerFacing += (int16)(dx << 6);
     p = (long)PlayerPitch - (long)(ENHANCED(ENH_INVERT_LOOK) ? -dy : dy) * 128;

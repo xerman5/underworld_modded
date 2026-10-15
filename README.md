@@ -7,6 +7,7 @@
 > - **`long-light`** (UW1, optional): with a light, you see further, and the view fades into black instead of ending at a hard edge. The automap and its experience still go by the original's radius.
 > - **`take-key`** (UW1, optional): the T key takes what is under the pointer, or under the crosshair with mouse-look, without switching to the take mode first.
 > - **Mouse-look and carried objects** (UW1 and UW2, with the original's `mouse-look` option): taking an object lets the pointer go, so it can be dragged to the inventory or thrown; mouse-look comes back once it is put down.
+> - **`fps-controls`** (UW1, optional): with mouse-look on, the left button attacks (hold to charge; a flick of the mouse before letting go picks a slash, a bash or a stab) and the right button looks; Space jumps; with `modern-keys`, E also takes objects.
 > - **64-pixel floor textures** (UW1): an `F32.TR` of your own with floors 64 pixels a side, in the home folder's `DATA`, is drawn as it is ([uw1/README.md](uw1/README.md#play-it)).
 >
 > The details are in [docs/ENHANCEMENTS.md](docs/ENHANCEMENTS.md) and each game's CHANGELOG (Unreleased). This fork has no release packages: [build the port from source](uw1/README.md#build-the-port-from-source). Its changes are under the original's MIT licence ([LICENSE](LICENSE), [NOTICE](NOTICE)). The badges, release links and web page below are the original project's.

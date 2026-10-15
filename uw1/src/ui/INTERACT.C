@@ -571,10 +571,17 @@ void (far *player_disp[])(void) = {
 
 /* The 3D view's mouse handler (see the file comment). A paralysed player can do nothing;
    the left button moves him (player_mous_move). */
+#ifndef __TURBOC__
+int port_fps_mouse(void);               /* port only: --enhance fps-controls (port/ui/keys.c) */
+#endif
 void far mous_in_3d(void)
 {
     unsigned char how;
 
+#ifndef __TURBOC__
+    if (port_fps_mouse())               /* port only: with mouse-look, left attacks, right looks */
+        return;
+#endif
     if (inplist->cmd & 1)
         player_mous_move();
     if (inplist->mode == MODE_GAME) {

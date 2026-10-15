@@ -199,7 +199,8 @@ void far init_player(void)
 #endif
 #ifndef __TURBOC__
     if (ENHANCED(ENH_MODERN_KEYS)) {   /* port only: UltimaHacks' keys (ui/keys.c), its input-mode masks */
-        _input_addkey(' ', 0, 1, (InputFn)port_key_attack);
+        if (!ENHANCED(ENH_FPS_CONTROLS))   /* fps-controls: Space jumps (below), the left button attacks */
+            _input_addkey(' ', 0, 1, (InputFn)port_key_attack);
         _input_addkey('.', 3, 1, (InputFn)port_key_attack);
         _input_addkey(';', 6, 1, (InputFn)port_key_attack);
         _input_addkey('p', 9, 1, (InputFn)port_key_attack);
@@ -225,6 +226,8 @@ void far init_player(void)
         _input_addkey(KEY_SHIFT | PORT_KEY_LSHIFT, 7, 0x11, (InputFn)parse_playin);      /* jump, as j */
         _input_addkey(KEY_SHIFT | KEY_CTRL | PORT_KEY_LSHIFT, 6, 0x11, (InputFn)parse_playin);   /* standing long jump, as J */
     }
+    if (ENHANCED(ENH_FPS_CONTROLS))    /* port only: --enhance fps-controls' Space jumps, as j */
+        _input_addkey(' ', 7, 0x11, (InputFn)parse_playin);
     if (ENHANCED(ENH_TAKE_KEY))        /* port only: --enhance take-key's t (ui/keys.c) */
         _input_addkey('t', 0, 1, (InputFn)port_key_take);
     if (ENHANCED(ENH_RUNE_KEYS)) {     /* port only: the rune keys (ui/keys.c) */

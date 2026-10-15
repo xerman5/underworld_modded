@@ -647,6 +647,12 @@ void far clear_fight_state(void)
    blow is struck. A bow or sling instead switches the cursor to aim and fires on release
    (player_fire). Making a blow sets the player's noise (10 charging, 15 striking), which
    critters hear. */
+#ifndef __TURBOC__
+static void port_fps_held(char *held);  /* port only: --enhance fps-controls, after player_attack */
+static char port_fps_swing;             /* the attack in progress is fps-controls' left button's */
+static int port_fps_pick;               /* the swing its release picked, 0 before */
+#endif
+
 void far player_attack(int swing)
 {
     int16 charge;
@@ -658,6 +664,9 @@ void far player_attack(int swing)
     if (attackKey > 0)
         held = key_on[attackKey] != 0;
     held = held || (mouse_getbut(&charge) & 2);
+#ifndef __TURBOC__
+    port_fps_held(&held);
+#endif
     if (pQatt > 0)
         return;
     if (pQatt < 0) {
@@ -715,6 +724,12 @@ void far player_attack(int swing)
                 return;
             }
             if (pQatt > -5) {
+#ifndef __TURBOC__
+                if (port_fps_swing && port_fps_pick && swing_state > 0) {
+                    swing_state = port_fps_pick;    /* port only: the flick's blow (port_fps_held) */
+                    pQatt = -1 - swing_kind[swing_state - 1];
+                }
+#endif
                 set_screen_frame(8, -pQatt - 1);
                 pQatt = -5;
             }
@@ -754,6 +769,52 @@ void far player_attack(int swing)
     play_pow = 0;
     elapsed = -1;
 }
+
+#ifndef __TURBOC__
+/* Port only: --enhance fps-controls (docs/ENHANCEMENTS.md), ours. With mouse-look on, the left
+   button in the 3D view attacks (ui/keys.c's port_fps_mouse): port_fps_attack draws a sheathed
+   weapon as a click on the weapon hand would (INTERACT.C's pick_fightmode) and starts a stab.
+   While the button is down the blow charges, as the original's right button charges it; a click
+   strikes too, the wind-up running on to the hold frame, where the original drops a blow let go
+   of before it. The first frame the button is up, the flick of the last moments (ui/MOUSE.C's
+   port_fps_flick) picks the blow, set at the hold frame before the strike: the swing's kind
+   (damage) and height (towhere) are then the flick's. A bow or sling is aimed and fired as the
+   original does, the left button holding it. */
+void far pick_fightmode(void);
+int port_fps_flick(void);
+
+void port_fps_attack(void)
+{
+    if (!player->drawn)
+        pick_fightmode();
+    if (!player->drawn || pQatt != 0 || weap_frame != -1)
+        return;
+    player_attack(2);
+    if (pQatt < 0) {
+        port_fps_swing = 1;
+        port_fps_pick = 0;
+        attackKey = -1;                 /* held by the left button alone (port_fps_held) */
+    }
+}
+
+static void port_fps_held(char *held)
+{
+    if (!port_fps_swing)
+        return;
+    if (pQatt == 0) {                   /* over */
+        port_fps_swing = 0;
+        return;
+    }
+    if (mouse_btns() & 1) {
+        *held = 1;
+        return;
+    }
+    if (!port_fps_pick)
+        port_fps_pick = port_fps_flick();
+    if (weap_frame < 3)
+        *held = 1;
+}
+#endif
 
 /* A missile (or anything thrown) has hit def: fills in the attack globals as for a
    blow, full power and no angle bonus, a hit location from the heights plus 4, and the

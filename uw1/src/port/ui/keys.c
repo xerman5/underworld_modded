@@ -2,7 +2,8 @@
    keyAndMouseBindings in our names (John Glassmyer, MIT). Each key that stands for a click sets
    what that click sets (the position in inplist, as the region's handler reads it) and calls the
    handler, so the game decides everything as it does for the click. Also --enhance take-key's
-   t, ours. Port only; bound in game/PLAYER.C's init_player and ui/AUTOMAP.C. */
+   t and --enhance fps-controls' mouse buttons and E, ours. Port only; bound in game/PLAYER.C's
+   init_player and ui/AUTOMAP.C, and fps-controls' buttons reached from ui/INTERACT.C's mous_in_3d. */
 #include "compat.h"
 #include "gfx.h"
 #include "ui.h"
@@ -27,6 +28,9 @@ void far player_3dget(void);
 unsigned char far IsMobElem(struct Object far *obj);
 extern int16 pTxtId;                    /* the texture a pick found, for look_nothing */
 extern struct Object far *newPlObj;     /* the object picked, for player_3dlook and _3duse */
+extern char releaseable;                /* pick_3d: the object picked can be taken */
+int port_mouse_look(void);              /* ui/MOUSE.C: mouse-look is on */
+void port_fps_attack(void);             /* combat/COMBAT.C: fps-controls' left button */
 
 extern int16 attackKey;                 /* combat/COMBAT.C: the key held to charge a blow */
 extern int16 m3dx, m3dy, m3dw, m3dh;    /* ui/MOUSE.C: the 3D view (m3dy its bottom edge) */
@@ -123,8 +127,30 @@ void far port_key_interact(int use)
         player_3dlook();
     else if ((IsMobElem(newPlObj) && OBJ_MAJOR(newPlObj) == 1) || (newPlObj->id & 0x1FF) == 0x1CD)
         player_3dtalk();                /* a character (or item 0x1CD): talk, as UltimaHacks */
+    else if (ENHANCED(ENH_FPS_CONTROLS) && releaseable
+             && !(OBJ_MAJOR(newPlObj) == MAJOR_MISC && OBJ_MINOR(newPlObj) == MINOR_CONTAINER))
+        player_3dget();                 /* fps-controls: what can be taken is taken, as t does; most
+                                           of it does nothing used where it lies */
     else
         player_3duse();
+}
+
+/* ui/INTERACT.C's mous_in_3d, with --enhance fps-controls and mouse-look on, in the game with
+   nothing on the cursor: the left button attacks (combat/COMBAT.C's port_fps_attack), the right
+   looks at the crosshair, as q does. 1 when it took the click; with an object on the cursor, a
+   target wanted or mouse-look off the buttons are the original's. */
+int port_fps_mouse(void)
+{
+    if (!ENHANCED(ENH_FPS_CONTROLS) || !port_mouse_look() || inplist->mode != MODE_GAME
+        || GameInputMode != GIM_NONE)
+        return 0;
+    if (inplist->cmd & 1)
+        port_fps_attack();
+    if (inplist->cmd & 2) {
+        port_key_interact(0);
+        mouse_release(1);
+    }
+    return 1;
 }
 
 /* t (take-key): takes what is under the pointer (the crosshair with mouse-look) into the cursor,

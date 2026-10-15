@@ -23,4 +23,5 @@ const struct enhance_flag enhance_table[ENH_COUNT] = {
     { "restore-at-rest", "A restored game starts at rest, without the motion or fall it was restored in", ENH_GAMEPLAY, NULL, NULL },
     { "take-key", "The T key takes what is under the pointer (the crosshair with mouse-look), as a click in the take mode", ENH_TIMING, NULL, NULL },
     { "long-light", "A light reaches further and fades to black at its edge, where the original cuts off", ENH_GAMEPLAY, NULL, NULL },
+    { "fps-controls", "With mouse-look, the left button attacks (a flick before release picks the blow) and the right looks; Space jumps; E also takes", ENH_TIMING, NULL, NULL },
 };
